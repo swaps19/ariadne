@@ -10,7 +10,7 @@ module DataUtil
     keys.compact!
     redis_data = (@redis_cli.mget keys)
     redis_data
-  rescue Exception => e
+  rescue StandardError => e
     puts e
   end
 
