@@ -10,14 +10,14 @@ module Ariadne
     raise 'Please specify options to be passed for Ariadne.insert_data method!' if options.size <= 0
     raise 'Please specify id and application name to be passed for Ariadne.insert_data method!' if options[:id].nil? || options[:id].size <= 0
     DataUtil.insert_data_in_redis(options.merge!(app_name: get_app_name(options[:app_name])))
-  rescue Exception => e
+  rescue StandardError => e
     puts e
     e
   end
 
   def self.get_data(app_name = '')
-    redis_data = DataUtil.get_data_from_redis(get_app_name(app_name))
-  rescue Exception => e
+    DataUtil.get_data_from_redis(get_app_name(app_name))
+  rescue StandardError => e
     puts e
     e
   end
@@ -40,8 +40,6 @@ module Ariadne
     end
     output_data.to_json
   end
-
-  private
 
   def self.get_app_name(app_name = '')
     app_name = ENV['APP_NAME'] if app_name.nil? || app_name.size <= 0
