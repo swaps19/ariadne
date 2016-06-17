@@ -23,5 +23,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'rake'
   spec.add_runtime_dependency     'redis'
+  spec.add_runtime_dependency     'hiredis'
   spec.add_runtime_dependency     'fakeredis'
 end
