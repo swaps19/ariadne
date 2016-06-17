@@ -7,23 +7,25 @@ module Ariadne
   DataUtil.init_redis_cli(Redis.new(url: ENV['REDIS_URL']))
 
   def self.insert_data(options = {})
-    raise 'Please specify options to be passed for Ariadne.insert_data method!' if options.size <= 0
-    raise 'Please specify id and application name to be passed for Ariadne.insert_data method!' if options[:id].nil? || options[:id].size <= 0
-    DataUtil.insert_data_in_redis(options.merge!(app_name: get_app_name(options[:app_name])))
+    options[:id] ||= options['id']
+    options[:app_name] ||= options['app_name']
+    raise 'Please specify data to be inserted for Ariadne.insert_data method!' if options.size <= 0
+    raise 'Please specify id to be passed for Ariadne.insert_data method!' if options[:id].nil? || options[:id].size <= 0
+    DataUtil.insert_data_in_redis(options.merge!(app_name: get_app_name(app_name: options[:app_name])))
   rescue StandardError => e
     puts e
     e
   end
 
-  def self.get_data(app_name = '')
-    DataUtil.get_data_from_redis(get_app_name(app_name))
+  def self.get_data(id: nil, app_name: '')
+    DataUtil.get_data_from_redis(id: id, app_name: get_app_name(app_name: app_name))
   rescue StandardError => e
     puts e
     e
   end
 
-  def self.get_data_with_time_difference(app_name = '')
-    redis_data = get_data(get_app_name(app_name))
+  def self.get_data_with_time_difference(id: nil, app_name: '')
+    redis_data = get_data(id: id, app_name: get_app_name(app_name: app_name))
     default_time_diff_threshold = 30
     output_data = []
     unless redis_data.nil?
@@ -41,7 +43,7 @@ module Ariadne
     output_data.to_json
   end
 
-  def self.get_app_name(app_name = '')
+  def self.get_app_name(app_name: '')
     app_name = ENV['APP_NAME'] if app_name.nil? || app_name.size <= 0
     app_name || ''
   end

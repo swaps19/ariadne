@@ -4,8 +4,9 @@ module DataUtil
     @redis_cli = obj
   end
 
-  def self.get_data_from_redis(app_name)
-    keys = @redis_cli.keys "#{app_name}*"
+  def self.get_data_from_redis(id:, app_name:)
+    key  = id.nil? ? "#{app_name}*" : "#{app_name}:#{id}"
+    keys = @redis_cli.keys key
     raise "Data not available for #{app_name}!" if keys.empty?
     keys.compact!
     redis_data = (@redis_cli.mget keys)
@@ -20,7 +21,7 @@ module DataUtil
     redis_data = nil
     @redis_cli.pipelined do
       redis_data = @redis_cli.set key, options.to_json
-      @redis_cli.expireat(key, Time.now + (24 * 60 * 60)) # expire a key after 1 day
+      @redis_cli.expire(key, (24 * 60 * 60)) # expire a key after 1 day
     end
     redis_data
   end
