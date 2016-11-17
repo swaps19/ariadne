@@ -47,7 +47,7 @@ Steps to install:
     ```ruby
     # Gemfile
 
-    gem 'ariadne'
+    gem 'ariadne', git: 'https://github.com/elitmus/ariadne.git'
     ```
 
 5. run 
